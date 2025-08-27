@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="ku" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Service Message Generator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans Arabic', Arial, sans-serif;
+            background: #f4f7f6;
+            min-height: 100vh;
+            padding: 20px;
+            direction: rtl;
+            font-weight: 400;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #c93730 0%, #a12c26 100%);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 16px;
+        }
+
+        .form-container {
+            padding: 30px 20px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+            font-size: 16px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s, box-shadow 0.3s;
+            font-family: 'Noto Sans Arabic', Arial, sans-serif;
+            font-weight: 400;
+            background-color: #fff;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #c93730;
+            box-shadow: 0 0 0 3px rgba(201, 55, 48, 0.1);
+        }
+
+        .dynamic-fields {
+            display: none;
+        }
+
+        .copy-button {
+            background: linear-gradient(135deg, #c93730 0%, #a12c26 100%);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .copy-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(201, 55, 48, 0.3);
+        }
+
+        .copy-button:active {
+            transform: translateY(0);
+        }
+        
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            text-align: center;
+            display: none;
+        }
+
+        .language-toggle {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 25px;
+            padding: 5px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .language-toggle button {
+            background: none;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .language-toggle button.active {
+            background: #c93730;
+            color: white;
+        }
+
+        .language-toggle button:not(.active) {
+            color: #666;
+        }
+
+        .language-toggle button:hover:not(.active) {
+            background: rgba(201, 55, 48, 0.1);
+        }
+
+        @media (max-width: 768px) {
+            body { padding: 10px; }
+            .container { margin: 10px; border-radius: 10px; }
+            .header { padding: 20px 15px; }
+            .header h1 { font-size: 20px; }
+            .form-container { padding: 20px 15px; }
+            .copy-button { padding: 12px 25px; font-size: 16px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="language-toggle">
+        <button onclick="changeLanguage('ku')" class="active" id="ku-btn">کوردی</button>
+        <button onclick="changeLanguage('ar')" id="ar-btn">عربي</button>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h1 id="header-title"></h1>
+            <p id="header-subtitle"></p>
+        </div>
+
+        <div class="form-container">
+            <form id="messageForm">
+                <div class="form-group">
+                    <label for="branch" id="branch-label"></label>
+                    <select id="branch" required></select>
+                </div>
+
+                <div class="form-group">
+                    <label for="messageType" id="message-type-label"></label>
+                    <select id="messageType" required></select>
+                </div>
+
+                <div class="dynamic-fields" id="patientName-group">
+                    <div class="form-group">
+                        <label for="patientName" id="patient-name-label"></label>
+                        <input type="text" id="patientName" required>
+                    </div>
+                </div>
+
+                <div class="dynamic-fields" id="appointmentDate-group">
+                    <div class="form-group">
+                        <label for="appointmentDate" id="appointment-date-label"></label>
+                        <input type="date" id="appointmentDate" required>
+                    </div>
+                </div>
+
+                <div class="dynamic-fields" id="appointmentTime-group">
+                    <div class="form-group">
+                        <label for="appointmentTime" id="appointment-time-label"></label>
+                        <select id="appointmentTime" required></select>
+                    </div>
+                </div>
+
+                <button type="button" class="copy-button" id="copy-button" onclick="generateAndCopyMessage()"></button>
+                <div class="success-message" id="successMessage"></div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const branchData = {
+            EBL: {
+                name: { ku: "هەولێر", ar: "أربيل" },
+                centerName: { ku: "سەنتەری ڕوح ئەلحەیات", ar: "مركز روح الحياة" },
+                address: { ku: "هەولێر - شەقامی ٣٠ مەتری - نزیک کونسوڵخانەی ئێران", ar: "أربيل - شارع ٣٠ متري - قرب القنصلية الإيرانية" },
+                googleMapLink: "https://maps.app.goo.gl/q2zj28h7WocpNzcj8",
+                socials: { facebook: "https://shorturl.at/VY07B", instagram: "https://shorturl.at/EyqYW", tiktok: "https://shorturl.at/86rW8", snapchat: "https://shorturl.at/cMQrr" }
+            },
+            BGW: {
+                name: { ku: "بەغدا", ar: "بغداد" },
+                centerName: { ku: "سەنتەری ڕوح ئەلحەیات", ar: "مركز روح الحياة" },
+                address: { ku: "بەغدا - عوتەیفیە - بەرامبەر دادگای فیدراڵی", ar: "بغداد - العطيفية - مقابل المحكمة الاتحادية" },
+                googleMapLink: "https://maps.app.goo.gl/QADFYgXJb5tH5es47",
+                socials: { facebook: "https://shorturl.at/2Emwi", instagram: "https://tinyurl.com/3sr6347c" }
+            },
+            MOS: {
+                name: { ku: "موسڵ", ar: "الموصل" },
+                centerName: { ku: "سەنتەری ڕوح ئەلحەیات", ar: "مركز روح الحياة" },
+                address: { ku: "موسڵ - گەڕەکی مەساریف - نزیک مزگەوتی شەهید مازن", ar: "الموصل - حي المصارف - قرب جامع الشهيد مازن" },
+                googleMapLink: "https://maps.app.goo.gl/fdAFgkkkXVYPpYtm6",
+                socials: { facebook: "https://shorturl.at/D8327", instagram: "https://shorturl.at/g9Qfs" }
+            },
+            ANB: {
+                name: { ku: "ئەنبار", ar: "الأنبار" },
+                centerName: { ku: "سەنتەری ڕوح ئەلحەیات", ar: "مركز روح الحياة" },
+                address: { ku: "ئەنبار/ڕومادی - شەقامی گشتی - سەرەتای شەقامی مەیسلون - کۆمەڵگەی بورجی مسک", ar: "الأنبار/الرمادي - الشارع العام - بداية شارع ميسلون - مجمع برج المسك" },
+                googleMapLink: "https://g.co/kgs/jgnS33B", 
+                socials: { facebook: "https://shorturl.at/IGxws", instagram: "https://shorturl.at/JNYW6" }
+            },
+            EUR: {
+                name: { ku: "سەنتەری ئەوروپی", ar: "المركز الأوروبي" },
+                centerName: { ku: "سەنتەری ئەوروپی", ar: "المركز الأوروبي" },
+                address: { ku: "موسڵ - نزیک پردی موسەننا - ناو نەخۆشخانەی تەندروستی ئافرەتان - نهۆمی زەوی", ar: "مدينة الموصل - قرب جسر المثنى - داخل مستشفى صحة المرأة - الطابق الأرضي" },
+                googleMapLink: "https://g.co/kgs/b2JmC4v",
+                socials: { facebook: "https://tinyurl.com/4c6y3h76", instagram: "https://tinyurl.com/ycbh97ph", tiktok: "https://tinyurl.com/mtab8ayn", snapchat: "https://tinyurl.com/26p7fjp8" }
+            },
+            KIR: {
+                name: { ku: "کەرکووک (ئینتەرناشناڵ)", ar: "كركوك (انترناشنال)" },
+                centerName: { ku: "سەنتەری ئینتەرناشناڵ", ar: "مركز انترناشنال" },
+                address: { ku: "کەرکووک - ناوچەی شۆراو - بەرامبەر نەخۆشخانەی شۆراوی حکومی - نزیک ئاسیاسێڵ", ar: "كركوك - منطقة شوراو - مقابل مستشفى شوراو الحكومي - بالقرب من اسياسيل" },
+                googleMapLink: "https://maps.app.goo.gl/hzhwmKLbwcxkJ9ui8",
+                socials: { facebook: "https://shorturl.at/sCQJT", instagram: "https://tinyurl.com/8j9b9h38", tiktok: "https://tinyurl.com/57marnna", snapchat: "https://tinyurl.com/yc4mwmyh" }
+            },
+            SUL: {
+                name: { ku: "سلێمانی (ئینتەرناشناڵ)", ar: "السليمانية (انترناشنال)" },
+                centerName: { ku: "نەخۆشخانەی ئینتەرناشناڵ", ar: "مستشفى انترناشنال" },
+                address: { ku: "سلێمانی - تووی مەلیک - نزیک فلکەی کاوە", ar: "السليمانية - توي ملك - قرب فلكة كاوه" },
+                googleMapLink: "https://maps.app.goo.gl/YKhnx1igP1sAHDa9A",
+                socials: { facebook: "https://tinyurl.com/2hctrjem", instagram: "https://tinyurl.com/2wd5psk2" }
+            }
+        };
+
+        const translations = {
+            ku: {
+                title: "دروستکەری نامەی خزمەتگوزاری",
+                subtitle: "نامەی ستاندارد بۆ چارەسەرخوازان دروست بکە",
+                branchLabel: "لق هەڵبژێرە",
+                messageTypeLabel: "جۆری نامە هەڵبژێرە",
+                patientNameLabel: "ناوی چارەسەرخواز",
+                appointmentDateLabel: "ڕۆژی مەوعید",
+                appointmentTimeLabel: "کاتی مەوعید",
+                copyButton: "دروستکردن و کۆپی کردنی نامە",
+                successMessage: "نامەکە بە سەرکەوتوویی کۆپی کرا!",
+                selectBranch: "لقێک هەڵبژێرە...",
+                selectMessageType: "جۆرێک هەڵبژێرە...",
+                messageTypes: {
+                    postCall: "نامەی دوای پەیوەندی",
+                    appointmentConfirmation: "پشتڕاستکردنەوەی مەوعید",
+                    missedAppointment: "دوای لەدەستدانی مەوعید"
+                },
+                socials: { facebook: "فەیسبووک", instagram: "ئینستاگرام", tiktok: "تیکتۆک", snapchat: "سناپچات"},
+                timePeriods: { am: "بەیانی", pm: "پاشنیوەڕۆ" },
+                days: ['یەکشەممە', 'دووشەممە', 'سێشەممە', 'چوارشەممە', 'پێنجشەممە', 'هەینی', 'شەممە']
+            },
+            ar: {
+                title: "مولّد رسائل خدمة العملاء",
+                subtitle: "أنشئ رسائل موحدة للمراجعين",
+                branchLabel: "اختر الفرع",
+                messageTypeLabel: "اختر نوع الرسالة",
+                patientNameLabel: "اسم المراجع",
+                appointmentDateLabel: "تاريخ الموعد",
+                appointmentTimeLabel: "وقت الموعد",
+                copyButton: "إنشاء ونسخ الرسالة",
+                successMessage: "تم نسخ الرسالة بنجاح!",
+                selectBranch: "اختر فرعاً...",
+                selectMessageType: "اختر نوعاً...",
+                messageTypes: {
+                    postCall: "رسالة ما بعد المكالمة",
+                    appointmentConfirmation: "رسالة تأكيد الموعد",
+                    missedAppointment: "رسالة متابعة بعد فوات الموعد"
+                },
+                socials: { facebook: "فيسبوك", instagram: "انستغرام", tiktok: "تيك توك", snapchat: "سناب شات"},
+                timePeriods: { am: "صباحاً", pm: "مساءً" },
+                days: ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت']
+            }
+        };
+        
+        const messageTemplates = {
+            ku: {
+                postCall: "زۆر سوپاس بۆ پەیوەندیکردنت بە [CenterName]. هیوادارین توانیبێتمان وەڵامی پرسیارەکانتان بدەینەوە.\n\nئاسوودەیی و دڵنیایی ئێوە گرنگترین شتە لای ئێمە. ئەگەر هەر پرسیارێکی دیکەتان هەبوو، دوودڵ مەبن لە پەیوەندیکردنەوە.\n\n📍 ناونیشان:\n[Address]\n\n📍 لۆکەیشن لەسەر نەخشە:\n[GoogleMapLink]\n\nبۆ ئاگاداربوون لە نوێترین زانیاری و چیرۆکەکانی سەرکەوتن، دەتوانن لە تۆڕە کۆمەڵایەتییەکان فۆڵۆومان بکەن:\n[SocialLinks]\n\nلەگەڵ ڕێزدا،\nتیمی [CenterName]",
+                appointmentConfirmation: "بەڕێز/خاتوون [Patient Name]،\n\nپەیوەندییەکەتان جێگەی خۆشحاڵیمانە. ئەم نامەیە بۆ پشتڕاستکردنەوەی کاتی سەردانەکەتانە:\n\n🗓️ ڕۆژ: [AppointmentDate]\n⏰ کاتژمێر: [AppointmentTime]\n\nتکایە ١٥ خولەک پێش کاتی دیاریکراو ئامادەبن.\n\n📍 ناونیشان:\n[Address]\n\n📍 لۆکەیشن لەسەر نەخشە:\n[GoogleMapLink]\n\nئەگەر هەر گۆڕانکارییەک لە کاتەکەتاندا ڕوویدا یان هەر پرسیارێکتان هەبوو، تکایە ئاگادارمان بکەنەوە.\n\nلەگەڵ ڕێزدا…",
+                missedAppointment: "بەڕێز/خاتوون [Patient Name]، سڵاو.\n\nئێمە ئەمڕۆ چاوەڕوانی بەڕێزتان بووین بۆ سەردانەکەتان لە کاتژمێر [AppointmentTime]. هیوادارین هیچ گرفتێک نەهاتبێتە پێش.\n\nتەندروستی و ئاسوودەیی ئێوە بۆ ئێمە گرنگە. ئەگەر ئارەزوو دەکەن کاتێکی دیکە بۆ سەردان دابنێن، یان ئەگەر هەر پرسیارێکتان هەیە، تکایە ئاگادارمان بکەنەوە. ئێمە هەمیشە ئامادەین بۆ یارمەتیدانتان.\n\nدەتوانن وەڵامی ئەم نامەیە بدەنەوە یان پەیوەندی بە هەمان ژمارەوە بکەن.\n\nلەگەڵ ڕێزدا،"
+            },
+            ar: {
+                postCall: "شكراً جزيلاً لاتصالكم بـ [CenterName]. نأمل أن نكون قد تمكنا من الإجابة على جميع استفساراتكم.\n\nراحتكم واطمئنانكم هي أولويتنا القصوى. إذا كان لديكم أي أسئلة أخرى، لا تترددوا في الاتصال بنا مرة أخرى.\n\n📍 العنوان:\n[Address]\n\n📍 الموقع على الخريطة:\n[GoogleMapLink]\n\nللاطلاع على أحدث المعلومات وقصص النجاح، يمكنكم متابعتنا على شبكات التواصل الاجتماعي:\n[SocialLinks]\n\nمع خالص تحياتنا،\nفريق [CenterName]",
+                appointmentConfirmation: "عزيزي/عزيزتي [Patient Name]،\n\nيسعدنا تواصلكم معنا. هذه الرسالة هي لتأكيد تفاصيل موعدكم:\n\n🗓️ اليوم: [AppointmentDate]\n⏰ الساعة: [AppointmentTime]\n\nيرجى الحضور قبل ١٥ دقيقة من الوقت المحدد.\n\n📍 العنوان:\n[Address]\n\n📍 الموقع على الخريطة:\n[GoogleMapLink]\n\nفي حال حدوث أي تغيير في جدولكم أو إذا كان لديكم أي استفسار، يرجى إبلاغنا.\n\nمع خالص تحياتنا…",
+                missedAppointment: "عزيزي/عزيزتي [Patient Name]، مرحباً.\n\nكنا في انتظاركم اليوم لموعدكم الساعة [AppointmentTime]. نأمل أن يكون كل شيء على ما يرام.\n\nصحتكم وراحتكم تهمنا. إذا كنتم ترغبون في تحديد موعد آخر، أو إذا كان لديكم أي استفسار، يرجى إبلاغنا. نحن دائماً على استعداد لمساعدتكم.\n\nيمكنكم الرد على هذه الرسالة أو الاتصال بنفس الرقم.\n\nمع خالص تحياتنا،"
+            }
+        };
+
+        let currentLanguage = 'ku';
+
+        const dom = {
+            html: document.documentElement,
+            headerTitle: document.getElementById('header-title'),
+            headerSubtitle: document.getElementById('header-subtitle'),
+            kuBtn: document.getElementById('ku-btn'),
+            arBtn: document.getElementById('ar-btn'),
+            branchSelect: document.getElementById('branch'),
+            messageTypeSelect: document.getElementById('messageType'),
+            branchLabel: document.getElementById('branch-label'),
+            messageTypeLabel: document.getElementById('message-type-label'),
+            patientNameGroup: document.getElementById('patientName-group'),
+            patientNameLabel: document.getElementById('patient-name-label'),
+            patientNameInput: document.getElementById('patientName'),
+            appointmentDateGroup: document.getElementById('appointmentDate-group'),
+            appointmentDateLabel: document.getElementById('appointment-date-label'),
+            appointmentDateInput: document.getElementById('appointmentDate'),
+            appointmentTimeGroup: document.getElementById('appointmentTime-group'),
+            appointmentTimeLabel: document.getElementById('appointment-time-label'),
+            appointmentTimeInput: document.getElementById('appointmentTime'),
+            copyButton: document.getElementById('copy-button'),
+            successMessage: document.getElementById('successMessage'),
+            messageForm: document.getElementById('messageForm')
+        };
+        
+        function changeLanguage(lang) {
+            currentLanguage = lang;
+            const t = translations[lang];
+            
+            dom.html.lang = lang;
+            dom.html.dir = 'rtl';
+
+            dom.kuBtn.classList.toggle('active', lang === 'ku');
+            dom.arBtn.classList.toggle('active', lang === 'ar');
+
+            document.title = t.title;
+            dom.headerTitle.textContent = t.title;
+            dom.headerSubtitle.textContent = t.subtitle;
+            dom.branchLabel.textContent = t.branchLabel;
+            dom.messageTypeLabel.textContent = t.messageTypeLabel;
+            dom.patientNameLabel.textContent = t.patientNameLabel;
+            dom.appointmentDateLabel.textContent = t.appointmentDateLabel;
+            dom.appointmentTimeLabel.textContent = t.appointmentTimeLabel;
+            dom.copyButton.textContent = t.copyButton;
+            dom.successMessage.textContent = t.successMessage;
+
+            populateBranches();
+            populateMessageTypes();
+            populateTimeOptions();
+        }
+
+        function populateBranches() {
+            const t = translations[currentLanguage];
+            dom.branchSelect.innerHTML = `<option value="">${t.selectBranch}</option>`;
+            for (const key in branchData) {
+                dom.branchSelect.innerHTML += `<option value="${key}">${branchData[key].name[currentLanguage]}</option>`;
+            }
+        }
+
+        function populateMessageTypes() {
+            const t = translations[currentLanguage];
+            dom.messageTypeSelect.innerHTML = `<option value="">${t.selectMessageType}</option>`;
+            for (const key in t.messageTypes) {
+                dom.messageTypeSelect.innerHTML += `<option value="${key}">${t.messageTypes[key]}</option>`;
+            }
+        }
+        
+        function populateTimeOptions() {
+            const timeSelect = dom.appointmentTimeInput;
+            const t = translations[currentLanguage].timePeriods;
+            timeSelect.innerHTML = ''; 
+            for (let hour = 9; hour <= 17; hour++) {
+                // Full hour
+                let displayHour00 = (hour > 12) ? hour - 12 : hour;
+                const ampm00_key = (hour >= 12) ? 'pm' : 'am';
+                const ampm00_text = t[ampm00_key];
+                const time00 = `${displayHour00}:00 ${ampm00_text}`;
+                timeSelect.innerHTML += `<option value="${time00}">${time00}</option>`;
+                
+                // Half hour, except for the last hour
+                if (hour < 17) {
+                    let displayHour30 = (hour > 12) ? hour - 12 : hour;
+                    const ampm30_key = (hour >= 12) ? 'pm' : 'am';
+                    const ampm30_text = t[ampm30_key];
+                    const time30 = `${displayHour30}:30 ${ampm30_text}`;
+                    timeSelect.innerHTML += `<option value="${time30}">${time30}</option>`;
+                }
+            }
+        }
+
+        function updateFormVisibility() {
+            const messageType = dom.messageTypeSelect.value;
+            const show = (el, required = false) => {
+                el.style.display = 'block';
+                el.querySelector('input, select').required = required;
+            };
+            const hide = (el) => {
+                el.style.display = 'none';
+                el.querySelector('input, select').required = false;
+            };
+            
+            hide(dom.patientNameGroup);
+            hide(dom.appointmentDateGroup);
+            hide(dom.appointmentTimeGroup);
+
+            if (messageType === 'appointmentConfirmation') {
+                show(dom.patientNameGroup, true);
+                show(dom.appointmentDateGroup, true);
+                show(dom.appointmentTimeGroup, true);
+            } else if (messageType === 'missedAppointment') {
+                show(dom.patientNameGroup, true);
+                show(dom.appointmentTimeGroup, true);
+            }
+        }
+
+        function formatAppointmentDate(dateString) {
+            if (!dateString) return '';
+            const date = new Date(dateString + 'T00:00:00Z');
+            const days = translations[currentLanguage].days;
+            const dayName = days[date.getUTCDay()];
+            return `${dateString} (${dayName})`;
+        }
+        
+        function generateSocialLinks(branchInfo) {
+            const t = translations[currentLanguage].socials;
+            let links = [];
+            
+            if (branchInfo.socials.facebook) links.push(`${t.facebook}:\n${branchInfo.socials.facebook}`);
+            if (branchInfo.socials.instagram) links.push(`${t.instagram}:\n${branchInfo.socials.instagram}`);
+            if (branchInfo.socials.tiktok) links.push(`${t.tiktok}:\n${branchInfo.socials.tiktok}`);
+            if (branchInfo.socials.snapchat) links.push(`${t.snapchat}:\n${branchInfo.socials.snapchat}`);
+
+            return links.join('\n\n');
+        }
+
+        function generateAndCopyMessage() {
+            if (!dom.messageForm.checkValidity()) {
+                dom.messageForm.reportValidity();
+                return;
+            }
+
+            const branchCode = dom.branchSelect.value;
+            const messageType = dom.messageTypeSelect.value;
+            
+            const branchInfo = branchData[branchCode];
+            let template = messageTemplates[currentLanguage][messageType];
+            
+            template = template.replace(/\[CenterName\]/g, branchInfo.centerName[currentLanguage]);
+
+            template = template.replace('[Address]', branchInfo.address[currentLanguage]);
+            template = template.replace('[GoogleMapLink]', branchInfo.googleMapLink || 'N/A');
+            
+            if(messageType === 'postCall'){
+                const socialLinksText = generateSocialLinks(branchInfo);
+                template = template.replace('[SocialLinks]', socialLinksText);
+            }
+
+            if (messageType === 'appointmentConfirmation' || messageType === 'missedAppointment') {
+                template = template.replace('[Patient Name]', dom.patientNameInput.value);
+            }
+            if (messageType === 'appointmentConfirmation') {
+                template = template.replace('[AppointmentDate]', formatAppointmentDate(dom.appointmentDateInput.value));
+                template = template.replace('[AppointmentTime]', dom.appointmentTimeInput.value);
+            }
+            if (messageType === 'missedAppointment') {
+                template = template.replace('[AppointmentTime]', dom.appointmentTimeInput.value);
+            }
+
+            navigator.clipboard.writeText(template).then(() => {
+                dom.successMessage.style.display = 'block';
+                setTimeout(() => { dom.successMessage.style.display = 'none'; }, 3000);
+            }).catch(err => {
+                alert('Copying failed!');
+            });
+        }
+
+        dom.messageTypeSelect.addEventListener('change', updateFormVisibility);
+        
+        window.onload = () => {
+            changeLanguage('ku'); // Default to Kurdish
+            dom.appointmentDateInput.valueAsDate = new Date();
+        };
+    </script>
+</body>
+</html>
