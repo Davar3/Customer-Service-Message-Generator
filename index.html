@@ -198,6 +198,13 @@
                     </div>
                 </div>
 
+                <div class="dynamic-fields" id="patientId-group">
+                    <div class="form-group">
+                        <label for="patientId" id="patient-id-label"></label>
+                        <input type="text" id="patientId" required>
+                    </div>
+                </div>
+
                 <div class="dynamic-fields" id="appointmentDate-group">
                     <div class="form-group">
                         <label for="appointmentDate" id="appointment-date-label"></label>
@@ -278,6 +285,7 @@
                 branchLabel: "لق هەڵبژێرە",
                 messageTypeLabel: "جۆری نامە هەڵبژێرە",
                 patientNameLabel: "ناوی چارەسەرخواز",
+                patientIdLabel: "کۆدی چارەخواز",
                 appointmentDateLabel: "ڕۆژی مەوعید",
                 appointmentTimeLabel: "کاتی مەوعید",
                 copyButton: "دروستکردن و کۆپی کردنی نامە",
@@ -299,6 +307,7 @@
                 branchLabel: "اختر الفرع",
                 messageTypeLabel: "اختر نوع الرسالة",
                 patientNameLabel: "اسم المراجع",
+                patientIdLabel: "كود المريض",
                 appointmentDateLabel: "تاريخ الموعد",
                 appointmentTimeLabel: "وقت الموعد",
                 copyButton: "إنشاء ونسخ الرسالة",
@@ -319,12 +328,12 @@
         const messageTemplates = {
             ku: {
                 postCall: "زۆر سوپاس بۆ پەیوەندیکردنت بە [CenterName]. هیوادارین توانیبێتمان وەڵامی پرسیارەکانتان بدەینەوە.\n\nئاسوودەیی و دڵنیایی ئێوە گرنگترین شتە لای ئێمە. ئەگەر هەر پرسیارێکی دیکەتان هەبوو، دوودڵ مەبن لە پەیوەندیکردنەوە.\n\n📍 ناونیشان:\n[Address]\n\n📍 لۆکەیشن لەسەر نەخشە:\n[GoogleMapLink]\n\nبۆ ئاگاداربوون لە نوێترین زانیاری و چیرۆکەکانی سەرکەوتن، دەتوانن لە تۆڕە کۆمەڵایەتییەکان فۆڵۆومان بکەن:\n[SocialLinks]\n\nلەگەڵ ڕێزدا،\nتیمی [CenterName]",
-                appointmentConfirmation: "بەڕێز/خاتوون [Patient Name]،\n\nپەیوەندییەکەتان جێگەی خۆشحاڵیمانە. ئەم نامەیە بۆ پشتڕاستکردنەوەی کاتی سەردانەکەتانە:\n\n🗓️ ڕۆژ: [AppointmentDate]\n⏰ کاتژمێر: [AppointmentTime]\n\nتکایە ١٥ خولەک پێش کاتی دیاریکراو ئامادەبن.\n\n📍 ناونیشان:\n[Address]\n\n📍 لۆکەیشن لەسەر نەخشە:\n[GoogleMapLink]\n\nئەگەر هەر گۆڕانکارییەک لە کاتەکەتاندا ڕوویدا یان هەر پرسیارێکتان هەبوو، تکایە ئاگادارمان بکەنەوە.\n\nلەگەڵ ڕێزدا…",
+                appointmentConfirmation: "بەڕێز/خاتوون [Patient Name]،\n\nپەیوەندییەکەتان جێگەی خۆشحاڵیمانە. ئەم نامەیە بۆ پشتڕاستکردنەوەی کاتی سەردانەکەتانە:\n\n🗓️ ڕۆژ: [AppointmentDate]\n⏰ کاتژمێر: [AppointmentTime]\n\nکۆدی چارەخوا: [PatientID] \n تکایە ئەم کۆدە بەکاربهێنە کاتێک لە داهاتوودا پەیوەندیمان پێوە دەکەیت یان سەردانمان دەکەیت.\n\nتکایە ١٥ خولەک پێش کاتی دیاریکراو ئامادەبن.\n\n📍 ناونیشان:\n[Address]\n\n📍 لۆکەیشن لەسەر نەخشە:\n[GoogleMapLink]\n\nئەگەر هەر گۆڕانکارییەک لە کاتەکەتاندا ڕوویدا یان هەر پرسیارێکتان هەبوو، تکایە ئاگادارمان بکەنەوە.\n\nلەگەڵ ڕێزدا…",
                 missedAppointment: "بەڕێز/خاتوون [Patient Name]، سڵاو.\n\nئێمە ئەمڕۆ چاوەڕوانی بەڕێزتان بووین بۆ سەردانەکەتان لە کاتژمێر [AppointmentTime]. هیوادارین هیچ گرفتێک نەهاتبێتە پێش.\n\nتەندروستی و ئاسوودەیی ئێوە بۆ ئێمە گرنگە. ئەگەر ئارەزوو دەکەن کاتێکی دیکە بۆ سەردان دابنێن، یان ئەگەر هەر پرسیارێکتان هەیە، تکایە ئاگادارمان بکەنەوە. ئێمە هەمیشە ئامادەین بۆ یارمەتیدانتان.\n\nدەتوانن وەڵامی ئەم نامەیە بدەنەوە یان پەیوەندی بە هەمان ژمارەوە بکەن.\n\nلەگەڵ ڕێزدا،"
             },
             ar: {
                 postCall: "شكراً جزيلاً لاتصالكم بـ [CenterName]. نأمل أن نكون قد تمكنا من الإجابة على جميع استفساراتكم.\n\nراحتكم واطمئنانكم هي أولويتنا القصوى. إذا كان لديكم أي أسئلة أخرى، لا تترددوا في الاتصال بنا مرة أخرى.\n\n📍 العنوان:\n[Address]\n\n📍 الموقع على الخريطة:\n[GoogleMapLink]\n\nللاطلاع على أحدث المعلومات وقصص النجاح، يمكنكم متابعتنا على شبكات التواصل الاجتماعي:\n[SocialLinks]\n\nمع خالص تحياتنا،\nفريق [CenterName]",
-                appointmentConfirmation: "عزيزي/عزيزتي [Patient Name]،\n\nيسعدنا تواصلكم معنا. هذه الرسالة هي لتأكيد تفاصيل موعدكم:\n\n🗓️ اليوم: [AppointmentDate]\n⏰ الساعة: [AppointmentTime]\n\nيرجى الحضور قبل ١٥ دقيقة من الوقت المحدد.\n\n📍 العنوان:\n[Address]\n\n📍 الموقع على الخريطة:\n[GoogleMapLink]\n\nفي حال حدوث أي تغيير في جدولكم أو إذا كان لديكم أي استفسار، يرجى إبلاغنا.\n\nمع خالص تحياتنا…",
+                appointmentConfirmation: "عزيزي/عزيزتي [Patient Name]،\n\nيسعدنا تواصلكم معنا. هذه الرسالة هي لتأكيد تفاصيل موعدكم:\n\n🗓️ اليوم: [AppointmentDate]\n⏰ الساعة: [AppointmentTime]\n\nكود المريض: [PatientID] \n يرجى استخدام هذا الكود عند الاتصال بنا مستقبلاً أو عند زيارتنا.\n\nيرجى الحضور قبل ١٥ دقيقة من الوقت المحدد.\n\n📍 العنوان:\n[Address]\n\n📍 الموقع على الخريطة:\n[GoogleMapLink]\n\nفي حال حدوث أي تغيير في جدولكم أو إذا كان لديكم أي استفسار، يرجى إبلاغنا.\n\nمع خالص تحياتنا…",
                 missedAppointment: "عزيزي/عزيزتي [Patient Name]، مرحباً.\n\nكنا في انتظاركم اليوم لموعدكم الساعة [AppointmentTime]. نأمل أن يكون كل شيء على ما يرام.\n\nصحتكم وراحتكم تهمنا. إذا كنتم ترغبون في تحديد موعد آخر، أو إذا كان لديكم أي استفسار، يرجى إبلاغنا. نحن دائماً على استعداد لمساعدتكم.\n\nيمكنكم الرد على هذه الرسالة أو الاتصال بنفس الرقم.\n\nمع خالص تحياتنا،"
             }
         };
@@ -344,6 +353,9 @@
             patientNameGroup: document.getElementById('patientName-group'),
             patientNameLabel: document.getElementById('patient-name-label'),
             patientNameInput: document.getElementById('patientName'),
+            patientIdGroup: document.getElementById('patientId-group'),
+            patientIdLabel: document.getElementById('patient-id-label'),
+            patientIdInput: document.getElementById('patientId'),
             appointmentDateGroup: document.getElementById('appointmentDate-group'),
             appointmentDateLabel: document.getElementById('appointment-date-label'),
             appointmentDateInput: document.getElementById('appointmentDate'),
@@ -371,6 +383,7 @@
             dom.branchLabel.textContent = t.branchLabel;
             dom.messageTypeLabel.textContent = t.messageTypeLabel;
             dom.patientNameLabel.textContent = t.patientNameLabel;
+            dom.patientIdLabel.textContent = t.patientIdLabel;
             dom.appointmentDateLabel.textContent = t.appointmentDateLabel;
             dom.appointmentTimeLabel.textContent = t.appointmentTimeLabel;
             dom.copyButton.textContent = t.copyButton;
@@ -432,11 +445,13 @@
             };
             
             hide(dom.patientNameGroup);
+            hide(dom.patientIdGroup);
             hide(dom.appointmentDateGroup);
             hide(dom.appointmentTimeGroup);
 
             if (messageType === 'appointmentConfirmation') {
                 show(dom.patientNameGroup, true);
+                show(dom.patientIdGroup, true);
                 show(dom.appointmentDateGroup, true);
                 show(dom.appointmentTimeGroup, true);
             } else if (messageType === 'missedAppointment') {
@@ -491,6 +506,7 @@
                 template = template.replace('[Patient Name]', dom.patientNameInput.value);
             }
             if (messageType === 'appointmentConfirmation') {
+                template = template.replace('[PatientID]', dom.patientIdInput.value);
                 template = template.replace('[AppointmentDate]', formatAppointmentDate(dom.appointmentDateInput.value));
                 template = template.replace('[AppointmentTime]', dom.appointmentTimeInput.value);
             }
